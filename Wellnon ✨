@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            color: white;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .welcome-text {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            animation: bounce 2s infinite;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .goodbye-text {
+            font-size: 2.5rem;
+            font-weight: bold;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease-out;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .goodbye-text.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .subtitle {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-30px);
+            }
+            60% {
+                transform: translateY(-15px);
+            }
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkle 1s ease-out forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes sparkle {
+            0% {
+                opacity: 1;
+                transform: scale(0);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1) translate(var(--tx, 0), var(--ty, 0));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .welcome-text {
+                font-size: 3rem;
+            }
+            
+            .goodbye-text {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="welcome-text">Welcome!</h1>
+        <p class="subtitle">You'll be redirected shortly...</p>
+        <h2 class="goodbye-text">Thank you! Goodbye!</h2>
+    </div>
+
+    <script>
+        function createSparkles() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle';
+                    
+                    const size = Math.random() * 10 + 5;
+                    sparkle.style.width = `${size}px`;
+                    sparkle.style.height = `${size}px`;
+                    
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    sparkle.style.left = `${x}px`;
+                    sparkle.style.top = `${y}px`;
+                    
+                    sparkle.style.setProperty('--tx', `${(Math.random() - 0.5) * 100}px`);
+                    sparkle.style.setProperty('--ty', `${(Math.random() - 0.5) * 100}px`);
+                    
+                    document.body.appendChild(sparkle);
+                    
+                    setTimeout(() => {
+                        sparkle.remove();
+                    }, 1000);
+                }, i * 100);
+            }
+        }
+        
+        setTimeout(() => {
+            const welcomeText = document.querySelector('.welcome-text');
+            const goodbyeText = document.querySelector('.goodbye-text');
+            const subtitle = document.querySelector('.subtitle');
+            
+            welcomeText.style.opacity = '0';
+            welcomeText.style.transform = 'scale(0.8)';
+            welcomeText.style.transition = 'all 0.5s ease-out';
+            
+            subtitle.style.opacity = '0';
+            subtitle.style.transition = 'opacity 0.5s ease-out';
+            
+            setTimeout(() => {
+                goodbyeText.classList.add('show');
+                createSparkles();
+            }, 500);
+            
+            setTimeout(() => {
+                try {
+                    // Try to close the window (will work if opened by JavaScript)
+                    window.close();
+                } catch (e) {
+                    // If window can't be closed, show a message
+                    document.body.innerHTML = `
+                        <div style="text-align: center; padding: 2rem;">
+                            <h2 style="color: white; margin-bottom: 1rem;">Thank you for visiting!</h2>
+                            <p style="color: rgba(255,255,255,0.8);">You can safely close this tab/window now.</p>
+                        </div>
+                    `;
+                }
+            }, 3000);
+        }, 3000);
+        
+        // Initial sparkle effect
+        createSparkles();
+    </script>
+</body>
+</html>
